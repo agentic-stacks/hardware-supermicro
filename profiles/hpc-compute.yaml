@@ -1,0 +1,43 @@
+# BIOS profile: HPC / Compute Node (AI/ML, scientific computing)
+# Apply via Redfish: PATCH /redfish/v1/Systems/1/Bios/Settings
+# Apply via SUM: sum -c ChangeBiosCfg --file hpc-compute.xml
+
+description: >
+  Optimized for HPC, scientific computing, and AI/ML training workloads.
+  Maximum CPU throughput, memory bandwidth, and GPU support.
+
+bios_settings:
+  # Processor
+  HyperThreading: Enabled            # HT benefits parallel workloads
+  VMX: Disabled                      # No VMs — bare metal compute
+  TurboMode: Enabled
+  C-States: Disabled
+  PackageCState: C0
+  P-States: Disabled
+  EnergyEfficientTurbo: Disabled
+  SNC: Enabled                       # Sub-NUMA Clustering improves memory-bound HPC codes
+  UPIPrefetch: Enabled               # UPI prefetch for multi-socket bandwidth
+
+  # Power & Performance
+  PowerPerformance: Performance
+
+  # Memory
+  NUMAOptimized: Enabled
+  PatrolScrub: Enabled
+
+  # Boot
+  BootMode: UEFI
+  QuietBoot: Disabled
+
+  # PCIe / GPU
+  SR-IOV: Disabled
+  Above4GDecoding: Enabled           # Required for large GPU BAR memory (A100, H100, etc.)
+  MmioHighBase: 56T                  # For systems with many GPUs
+
+notes: |
+  - SNC improves memory-bandwidth-bound codes by reducing NUMA hops.
+  - Above4GDecoding must be enabled for multi-GPU systems (A100, H100, etc.).
+  - Disable power saving features for deterministic runtimes.
+  - For GPU clusters, verify PCIe topology with lspci -tv.
+  - InfiniBand/RoCE NICs: ensure SR-IOV is disabled unless using GPU-Direct RDMA with VMs.
+  - Attribute names shown are common across X12/X13; X11 may use slightly different names.

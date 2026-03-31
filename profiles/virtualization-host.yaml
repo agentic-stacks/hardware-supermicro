@@ -1,0 +1,45 @@
+# BIOS profile: Virtualization Host (ESXi, Proxmox, KVM)
+# Apply via Redfish: PATCH /redfish/v1/Systems/1/Bios/Settings
+# Apply via SUM: sum -c ChangeBiosCfg --file virtualization-host.xml
+
+description: >
+  Optimized for virtualization workloads. Enables hardware-assisted
+  virtualization, SR-IOV, and performance-oriented power settings.
+
+# Supermicro BIOS attribute names (verify against your specific motherboard model)
+# Attribute names may vary slightly between X11/X12/X13 platforms.
+bios_settings:
+  # Processor
+  HyperThreading: Enabled            # Logical processors per core
+  VMX: Enabled                       # Intel VT-x hardware virtualization
+  VTd: Enabled                       # Intel VT-d (IOMMU for device passthrough)
+  SR-IOV: Enabled                    # Single Root I/O Virtualization
+  ACS: Enabled                       # Access Control Services (IOMMU isolation)
+
+  # Power & Performance
+  PowerPerformance: Performance      # Performance power profile
+  TurboMode: Enabled                 # Intel Turbo Boost
+  C-States: Disabled                 # Disable CPU idle states for consistent latency
+  PackageCState: C0                  # Prevent package-level sleep
+  P-States: Disabled                 # Disable frequency scaling (OS manages instead)
+  EnergyEfficientTurbo: Disabled     # Don't throttle turbo for efficiency
+
+  # Memory
+  NUMAOptimized: Enabled             # Preserve NUMA topology
+  PatrolScrub: Enabled               # Periodic memory error detection
+  SNC: Disabled                      # Sub-NUMA Clustering — disable for general virt
+
+  # Boot
+  BootMode: UEFI                     # UEFI boot mode
+  QuietBoot: Disabled                # Show POST messages for troubleshooting
+
+  # Network
+  PXEBootCapability: UEFI            # UEFI PXE boot
+
+notes: |
+  - Disable C-states to avoid latency spikes in VM scheduling.
+  - SR-IOV is critical for NIC passthrough to VMs.
+  - VT-d required for PCIe passthrough and IOMMU groups.
+  - NUMA-aware: keep NUMA optimization enabled so hypervisor sees real topology.
+  - ACS enables proper IOMMU group isolation for safe device passthrough.
+  - Attribute names shown are common across X12/X13; X11 may use slightly different names.

@@ -1,0 +1,39 @@
+# BIOS profile: Storage Server (Ceph, MinIO, ZFS, NFS)
+# Apply via Redfish: PATCH /redfish/v1/Systems/1/Bios/Settings
+# Apply via SUM: sum -c ChangeBiosCfg --file storage-server.xml
+
+description: >
+  Optimized for storage-heavy workloads. Prioritizes I/O throughput,
+  PCIe bandwidth for NVMe/HBAs, and memory for caching.
+
+bios_settings:
+  # Processor
+  HyperThreading: Enabled            # Storage daemons benefit from extra threads
+  VMX: Disabled
+  TurboMode: Enabled
+  C-States: Disabled
+  PackageCState: C0
+
+  # Power & Performance
+  PowerPerformance: Performance
+
+  # Memory
+  NUMAOptimized: Enabled
+  PatrolScrub: Enabled
+  SNC: Disabled
+
+  # Boot
+  BootMode: UEFI
+  QuietBoot: Disabled
+
+  # I/O
+  SR-IOV: Disabled
+  Above4GDecoding: Enabled           # For NVMe drives with large BAR
+
+notes: |
+  - For Ceph OSD nodes, ensure NVMe drives are on PCIe lanes closest to the CPU handling I/O.
+  - Use HT — storage daemons benefit from extra threads for I/O handling.
+  - RAID controller: consider IT mode / HBA passthrough for software-defined storage (Ceph, ZFS).
+  - For JBOD configurations, flash MegaRAID to IT/HBA mode using storcli.
+  - Monitor drive health aggressively — storage servers have many drives and failures are common.
+  - Attribute names shown are common across X12/X13; X11 may use slightly different names.

@@ -1,0 +1,37 @@
+# BIOS profile: Database Server (PostgreSQL, MySQL, Oracle, SQL Server)
+# Apply via Redfish: PATCH /redfish/v1/Systems/1/Bios/Settings
+# Apply via SUM: sum -c ChangeBiosCfg --file database-server.xml
+
+description: >
+  Optimized for database workloads. Prioritizes memory bandwidth,
+  low-latency I/O, and consistent performance over power savings.
+
+bios_settings:
+  # Processor
+  HyperThreading: Disabled           # Databases prefer real cores — avoids contention
+  VMX: Disabled                      # No virtualization on bare-metal DB servers
+  TurboMode: Enabled
+  C-States: Disabled
+  PackageCState: C0
+  P-States: Disabled
+  EnergyEfficientTurbo: Disabled
+
+  # Power & Performance
+  PowerPerformance: Performance
+
+  # Memory
+  NUMAOptimized: Enabled             # NUMA-aware databases benefit from topology
+  PatrolScrub: Enabled
+  SNC: Disabled
+
+  # Boot
+  BootMode: UEFI
+  QuietBoot: Disabled
+
+notes: |
+  - Hyper-Threading often hurts database performance due to cache contention.
+  - NUMA awareness: pin database processes to NUMA nodes for best performance.
+  - Disable C-states for consistent query latency.
+  - For NVMe-based storage, ensure PCIe slots match CPU affinity.
+  - Monitor memory ECC errors closely — database corruption from bit flips is catastrophic.
+  - Attribute names shown are common across X12/X13; X11 may use slightly different names.
