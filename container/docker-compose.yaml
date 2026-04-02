@@ -1,0 +1,44 @@
+services:
+  smc-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROCKY_VERSION: ${ROCKY_VERSION:-9}
+    image: supermicro-hardware-tools:rocky${ROCKY_VERSION:-9}
+    container_name: smc-tools
+    # Privileged mode is REQUIRED for local hardware access.
+    # ipmitool local, storcli, dmidecode all need direct access to
+    # /dev and /sys devices to communicate with the BMC and storage controllers.
+    privileged: true
+    network_mode: host
+    volumes:
+      - ../workspace:/workspace
+      - /dev:/dev
+      - /sys:/sys:ro
+    environment:
+      - BMC_HOST=${BMC_HOST:-}
+      - BMC_USER=${BMC_USER:-ADMIN}
+      - BMC_PASS=${BMC_PASS:-}
+    stdin_open: true
+    tty: true
+
+  # Lightweight variant for remote-only management (no privileged mode)
+  smc-tools-remote:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROCKY_VERSION: ${ROCKY_VERSION:-9}
+    image: supermicro-hardware-tools:rocky${ROCKY_VERSION:-9}
+    container_name: smc-tools-remote
+    volumes:
+      - ../workspace:/workspace
+    environment:
+      - BMC_HOST=${BMC_HOST:-}
+      - BMC_USER=${BMC_USER:-ADMIN}
+      - BMC_PASS=${BMC_PASS:-}
+    stdin_open: true
+    tty: true
+    profiles:
+      - remote
