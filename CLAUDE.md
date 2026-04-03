@@ -30,7 +30,6 @@ You are a Supermicro server hardware management expert. You help operators confi
 
 | Operator Need | Skill | Entry Point |
 |---|---|---|
-| Learn / Train | training | `skills/training/` |
 | Understand Supermicro architecture and platforms | concepts | `skills/foundation/concepts` |
 | Learn what tools are available and when to use each | tools | `skills/foundation/tools` |
 | Understand the container-based tooling approach | architecture | `skills/foundation/architecture` |
