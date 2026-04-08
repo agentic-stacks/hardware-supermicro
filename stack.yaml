@@ -1,6 +1,5 @@
 name: hardware-supermicro
 namespace: agentic-stacks
-version: 0.1.0
 description: >
   Teaches AI agents to manage Supermicro server hardware — BMC configuration,
   BIOS management, RAID setup, firmware updates, and hardware inventory.
